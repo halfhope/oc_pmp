@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>PMP featured module compatibility</name>
+	<code>pmp_featured_module_compatibility</code>
+	<version>1.0</version>
+	<author>halfhope</author>
+	<link>https://www.shtt.blog</link>
+	<file path="catalog/controller/extension/module/featured.php">
+		<operation>
+			<search><![CDATA[public function index($setting)]]></search>
+			<add position="after"><![CDATA[
+		if (isset($setting['heading_title'])) {
+			$data['heading_title'] = $setting['heading_title'];
+		}
+		]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[return $this->load->view('extension/module/featured', $data);]]></search>
+			<add position="replace"><![CDATA[
+			if (!empty($setting['template'])) {
+				$template = $setting['template'];
+			} else {
+				$template = 'extension/module/featured';
+			}
+
+			return $this->load->view($template, $data);
+		]]></add>
+		</operation>
+	</file>
+</modification>
