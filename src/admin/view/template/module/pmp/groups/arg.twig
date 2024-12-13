@@ -1,0 +1,217 @@
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-mode">{{ entry_arg_mode }}</label>
+	<div class="col-sm-10">
+		<div class="mode switch btn-group">
+			<label for="radio_mode1" data-bs-toggle="tooltip" title="{{ help_arg_mode_abs }}" class="btn btn-outline-secondary {{ (mode == 1) ? 'active' }}" {{ (mode == 1) ? 'active' }}>
+				<input type="radio" id="radio_mode1" name="mode" value="1" data-group="mode_abs" {{ (mode == 1) ? 'checked="checked"' }}>{{ text_arg_mode_abs }}
+			</label>
+			<label for="radio_mode2" data-bs-toggle="tooltip" title="{{ help_arg_mode_rel }}" class="btn btn-outline-secondary {{ (mode == 2) ? 'active' }}" {{ (mode == 2) ? 'active' }}>
+				<input type="radio" id="radio_mode2" name="mode" value="2" data-group="mode_rel" {{ (mode == 2) ? 'checked="checked"' }}>{{ text_arg_mode_rel }}
+			</label>
+		</div>
+		<div class="float-end checkbox">
+			<label for="radio_invert" data-bs-toggle="tooltip" title="{{ entry_arg_invert_help }}" class="form-check-label">
+				<input type="checkbox" id="radio_invert" name="invert" class="form-check-input" value="1" {{ (invert) ? 'checked' : '' }}>&nbsp;{{ entry_arg_invert }}
+			</label>
+		</div>
+	</div>
+</div>
+{% if (categories is defined) %}
+<div class="row form-group" data-mode="mode_abs" data-section="arg">
+	<label class="col-sm-2 col-form-label">{{ entry_categories }}</label>
+	<div class="col-sm-10">
+		<div class="well well-sm">
+			<table class="table table-striped">
+			{% for category_key, category in categories %}
+			<tr>
+				<td class="checkbox">
+				<label class="form-check-label">
+					{% if category.category_id in selected_categories %}
+					<input type="checkbox" name="selected_categories[]" class="form-check-input" value="{{ category.category_id }}" checked="checked" />
+					{{ category.name }}
+					{% else %}
+					<input type="checkbox" name="selected_categories[]" class="form-check-input" value="{{ category.category_id }}" />
+					{{ category.name }}
+					{% endif %}
+				</label> 
+				</td>
+			</tr>
+			{% endfor %}
+			</table>
+		</div>
+		<a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', true);return false;">{{ text_select_all }}</a> / <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', false);return false;">{{ text_unselect_all }}</a> / <a href="#" onclick="invertSelection(this);return false;">{{ text_invert_selection }}</a>
+	</div>
+</div>
+{% endif %}
+
+{% if (manufacturers is defined) %}
+<div class="row form-group" data-mode="mode_abs" data-section="arg">
+	<label class="col-sm-2 col-form-label">{{ entry_manufacturers }}</label>
+	<div class="col-sm-10">
+		<div class="well well-sm">
+			<table class="table table-striped">
+			{% for manufacturer_key, manufacturer in manufacturers %}
+			<tr class="form-check-label">
+				<td class="checkbox">
+				<label>
+					{% if manufacturer.manufacturer_id in selected_manufacturers %}
+					<input type="checkbox" name="selected_manufacturers[]" class="form-check-input" value="{{ manufacturer.manufacturer_id }}" checked="checked" />
+					{{ manufacturer.name }}
+					{% else %}
+					<input type="checkbox" name="selected_manufacturers[]" class="form-check-input" value="{{ manufacturer.manufacturer_id }}" />
+					{{ manufacturer.name }}
+					{% endif %}
+				</label> 
+				</td>
+			</tr>
+			{% endfor %}
+			</table>
+		</div>
+		<a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', true);return false;">{{ text_select_all }}</a> / <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', false);return false;">{{ text_unselect_all }}</a> / <a href="#" onclick="invertSelection(this);return false;">{{ text_invert_selection }}</a>
+	</div>
+</div>
+{% endif %}
+
+{% if (consider_categories is defined) %}
+<div class="row form-group" data-mode="mode_rel" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-consider_categories"><span data-bs-toggle="tooltip" title="{{ entry_consider_categories_help }}">{{ entry_consider_categories }}</span></label>
+	<div class="col-sm-10">
+		<div class="switch btn-group">
+			<label for="consider_categories1" class="btn btn-outline-secondary {{ (consider_categories) ? 'active' }}"> 
+				<input type="radio" name="consider_categories" id="consider_categories1" value="1" {{ (consider_categories) ? 'checked="checked"' }}/>{{ text_yes }}
+			</label>
+			<label for="consider_categories2" class="btn btn-outline-secondary {{ (not consider_categories) ? 'active' }}"> 
+				<input type="radio" name="consider_categories" id="consider_categories2" value="0" {{ (not consider_categories) ? 'checked="checked"' }}/>{{ text_no }}
+			</label>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+{% if (consider_manufacturers is defined) %}
+<div class="row form-group" data-mode="mode_rel" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-consider_manufacturers"><span data-bs-toggle="tooltip" title="{{ entry_consider_manufacturers_help }}">{{ entry_consider_manufacturers }}</span></label>
+	<div class="col-sm-10">
+		<div class="switch btn-group">
+			<label for="consider_manufacturers1" class="btn btn-outline-secondary {{ (consider_manufacturers) ? 'active' }}"> 
+				<input type="radio" name="consider_manufacturers" id="consider_manufacturers1" value="1" {{ (consider_manufacturers) ? 'checked="checked"' }}/>{{ text_yes }}
+			</label>
+			<label for="consider_manufacturers2" class="btn btn-outline-secondary {{ (not consider_manufacturers) ? 'active' }}"> 
+				<input type="radio" name="consider_manufacturers" id="consider_manufacturers2" value="0" {{ (not consider_manufacturers) ? 'checked="checked"' }}/>{{ text_no }}
+			</label>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label"><span data-bs-toggle="tooltip" title="{{ entry_stock_status_help }}">{{ entry_stock_status }}</span></label>
+	<div class="col-sm-10">
+		<div class="well well-sm">
+			<table class="table table-striped">
+			{% for stock_status_key, stock_status_data in stock_statuses %}
+			<tr class="form-check-label">
+				<td class="checkbox">
+				<label>
+					{% if stock_status_data.stock_status_id in stock_status %}
+					<input type="checkbox" name="stock_status[]" class="form-check-input" value="{{ stock_status_data.stock_status_id }}" checked="checked" />
+					{{ stock_status_data.name }}
+					{% else %}
+					<input type="checkbox" name="stock_status[]" class="form-check-input" value="{{ stock_status_data.stock_status_id }}" />
+					{{ stock_status_data.name }}
+					{% endif %}
+				</label> 
+				</td>
+			</tr>
+			{% endfor %}
+			</table>
+		</div>
+		<a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', true);return false;">{{ text_select_all }}</a> / <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', false);return false;">{{ text_unselect_all }}</a> / <a href="#" onclick="invertSelection(this);return false;">{{ text_invert_selection }}</a>
+	</div>
+</div>
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-quantity_expression">{{ entry_quantity }}</label>
+	<div class="col-sm-10">
+		<div class="row">
+			<div class="col-sm-6">
+				<select name="quantity_expression" id="input-quantity_expression" class="form-select">
+				{% for expression in qty_expressions %}
+					{% if quantity_expression == expression %}
+					<option value="{{ expression }}" selected="selected">{{ expression }}</option>
+					{% else %}
+					<option value="{{ expression }}">{{ expression }}</option>
+					{% endif %}
+				{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-6">
+				<input type="text" name="quantity" value="{{ quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-sort">{{ entry_sort_order }}</label>
+	<div class="col-sm-10">
+		<div class="row">
+			<div class="col-sm-6">
+				<select name="sort" id="input-sort" class="form-select">
+					{% for sort_index, sort_name in sorts %}
+						{% if sort == sort_index %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ sort_index }}" selected="selected">{{ sort_name }}</option>
+						{% else %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ sort_index }}">{{ sort_name }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-6">
+				<select name="order" id="input-order" class="form-select">
+					{% for order_index, order_name in orders %}
+						{% if order == order_index %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ order_index }}" selected="selected">{{ order_name }}</option>
+						{% else %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ order_index }}">{{ order_name }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function initMode(mode) {
+	$('.form-group[data-mode]').addClass('visually-hidden');
+	$('.form-group[data-mode=' + mode + ']').removeClass('visually-hidden');
+}
+
+function invertSelection(sender) {
+	$.each($(sender).closest('.form-group').find('input[type=checkbox]'), function(index, value){
+		$(value).prop('checked', !$(value).prop('checked'));
+	});
+}
+
+$('#data_source_form').delegate('.mode > label', 'click', function(e) {
+	let mode = $(this).find('input').data('group');
+	initMode(mode);
+});
+
+var mode = $('input[name=mode]:checked').data('group');
+
+initMode(mode);
+</script>
+
+<style>
+/* #form-module .checkbox > .col-form-label {
+	display: flex;
+	align-items: center;
+} */
+#form-module .form-group[data-section="arg"] {
+	background-color: #fff4d9;
+	border-left: 5px solid #ffd166;
+}
+</style>

@@ -1,0 +1,460 @@
+{{ header }}{{ column_left }}
+<div id="content">
+<style>
+html {
+	overflow-y:scroll;
+}
+body {
+	text-rendering: geometricPrecision;
+}
+label.col-form-label span:after {
+	font-family: FontAwesome;
+	color: #1E91CF;
+	content: "\f059";
+	margin-left: 4px;
+}
+#spinner.active {
+  border: 4px solid #80b1cb; /* Light grey */
+  border-top: 4px solid #1E91CF; /* Blue */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: absolute;
+  animation: spin 1s linear infinite;
+}
+#data_source_form {
+	position: relative;
+	/* margin:0; */
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes color {
+  0% { background: rgba(6,6,6,0) }
+  100% { background: rgba(6,6,6,.2); }
+}
+#content .panel-body{
+	padding-top:0px;
+	padding-bottom:0px;
+}
+.btn, input, select {
+	/* outline: none !important; */
+}
+.card-body {
+	padding: 0px 11px;
+}
+
+/* #form-module .col-form-label {
+	padding-top:0;
+} */
+#form-module .form-group {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	display: flex;
+	align-items: center;
+	/* border-left: 5px solid #dfdfdf; */
+}
+#form-module .form-control:read-only{
+	/* background: #fff; */
+}
+#data_source_form.form-group + .form-group {
+	border-top: 1px dashed #c1c1c1;
+}
+.form-group + #data_source_form.form-group {
+	border-top: 1px dashed #c1c1c1;
+}
+.form-group + .form-group {
+	border-top: 1px solid #ededed;
+}
+#data_source_form.form-group + .form-group {
+	border-top: 1px dashed #c1c1c1;
+}
+.form-group#data_source_form{
+	/* margin: 0px -15px 0px -15px; */
+	padding:0px;
+	/* margin:0; */
+	display: block;
+}
+#data_source_form .form-group {
+	/* margin-left:-5px; */
+	margin:0;
+	padding: 10px 0px;
+}
+#form-module .well-sm {
+	padding: 7px;
+	margin-bottom:10px;
+	max-height:200px;
+	overflow-y:scroll;
+	min-height:36.56px!important;
+	background: #fff;
+	border: 1px solid #ced4da;
+	border-radius: 0.2308rem;
+}
+#dynamic_description .well-sm {
+	width: 100%;
+	display: block;
+}
+#form-module .well-sm .checkbox {
+	min-height:unset;
+	padding-top: 0px;
+	padding-bottom: 0;
+	border: 0;
+}
+#form-module .well-sm .checkbox label {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	/* padding-left: 15px; */
+}
+#form-module .well-sm .checkbox label input[type="checkbox"] {
+	margin-right: 5px;
+}
+#form-module .well-sm .table {
+	margin: 0;
+}
+#form-module .well-sm .table tbody tr {
+	background:none;
+}
+#form-module .switch input[type="radio"] {
+	display:none;
+}
+#form-module .form-group[data-section="pmp"] {
+	background-color: #f4ffed;
+	border-left: 5px solid #b1db95;
+}
+#form-module .form-group[data-section="compatibility"] {
+	background-color: #f7f2ff;
+	border-left: 5px solid #c4a0ff;
+}
+#form-module .form-group[data-section="default"] {
+	background-color: #fff;
+	border-left: 5px solid #dfdfdf;
+}
+#form-module input[name="products_search"] {
+	margin-bottom: 5px!important;
+}
+option[value="rd_recommendation"],option[value="rd_similar"] {
+	color:#3f3;
+}
+#content .dropdown-toggle::after {
+	display: inline-block;
+	vertical-align: 0.155em;
+	content: "";
+	border-top: 0.355em solid;
+	border-right: 0.355em solid transparent;
+	border-bottom: 0;
+	border-left: 0.355em solid transparent;
+}
+</style>
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-bs-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-light"><i class="fa fa-reply"></i></a>
+				<div class="btn-group" data-bs-toggle="tooltip" title="{{ button_modules }}">
+					<a href="{{ modules_link }}" class="btn btn-success">{{ button_modules }}</a>
+					<button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+						<span class="visually-hidden">Toggle Dropdown</span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{{ add_module }}">{{ button_add_module }}</a></li>
+						{% if (modules is not empty) %}
+						<li><hr class="dropdown-divider"></li>
+						<li><h6 class="dropdown-header">{{ button_modules }}</h6></li>
+						{% for module in modules %}
+						<li><a class="dropdown-item" href="{{ module.edit }}">{{ module.name }}</a></li>
+						{% endfor %}
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ol class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ol>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if error_warning %}
+			<div class="alert alert-danger alert-dismissible" data-countdown><i class="fas fa-exclamation-circle"></i>&nbsp;<span class="countdown">[2]</span> {{ error_warning }}
+				<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+		{% if success %}
+		<div class="alert alert-success alert-dismissible" data-countdown><i class="fas fa-check-circle"></i>&nbsp;<span class="countdown">[2]</span> {{ success }}
+			<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		{% endif %}
+		<div class="card">
+			<div class="card-header"><i class="fas fa-list"></i> {{ text_edit }}<span class="float-end">v{{ version }}</span>
+				{% if (sections) %}
+				<div class="pull-right">
+					{% for section in sections %}
+					<a href="{{ section.href }}"><i class="fa {{ section.icon }}"></i>&nbsp;{{ section.text }}</a>&nbsp;
+					{% endfor %}
+				</div>
+				{% endif %}
+			</div>
+			<div class="card-body">
+				<div class="menu-manager-container">
+					<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+						
+						<div class="row form-group" data-section="default">
+							<label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+							<div class="col-sm-10">
+								
+								<div class="input-group">
+									<button class="btn btn-light" id="button-fill">{{ button_fill }}</button>
+									<input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+								</div>
+
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="default">
+							<label class="col-sm-2 col-form-label" for="input-limit">{{ entry_limit }}</label>
+							<div class="col-sm-10">
+								<input type="text" name="limit" value="{{ limit }}" placeholder="{{ entry_limit }}" id="input-limit" class="form-control" />
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="default">
+							<label class="col-sm-2 col-form-label" for="input-image_width">{{ entry_image_size }}</label>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="col-sm-6">
+										<input type="text" name="width" value="{{ width }}" placeholder="{{ entry_image_width }}" id="input-image_width" class="form-control" />	
+									</div>
+									<div class="col-sm-6">
+										<input type="text" name="height" value="{{ height }}" placeholder="{{ entry_image_height }}" id="input-image_height" class="form-control" />	
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="default">
+							<label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+							<div class="col-sm-10">
+								<select name="status" id="input-status" class="form-select">
+									{% if status %}
+									<option value="1" selected="selected">{{ text_enabled }}</option>
+									<option value="0">{{ text_disabled }}</option>
+									{% else %}
+									<option value="1">{{ text_enabled }}</option>
+									<option value="0" selected="selected">{{ text_disabled }}</option>
+									{% endif %}
+								</select>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="pmp">
+							<label class="col-sm-2 col-form-label" for="input-title">{{ entry_title }}</label>
+							<div class="col-sm-10">
+								<div class="row">
+								{% for language_key, language in languages %}
+									<div class="col-sm-6">
+										<div class="input-group">
+											<span class="input-group-text"><img src="language/{{ language.code }}/{{ language.code }}.png"></span>
+											<input type="text" name="title[{{ language.language_id }}]" value="{{ title[language.language_id] }}" placeholder="{{ language.name }}" class="form-control">
+										</div>
+									</div>
+								{% endfor %}
+								</div>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="pmp">
+							<label class="col-sm-2 col-form-label" for="input-data_source"><i id="spinner"></i> {{ entry_data_source }} </label>
+							<div class="col-sm-10">
+								<select name="data_source" id="input-data_source" class="form-select">
+									{% for group_data in groups %}
+										<optgroup label="{{ group_data.text }}">
+										{% for datasource in group_data.datasources %}
+											{% if data_source == datasource.code %}
+											<option value="{{ datasource.code }}" selected="selected">{{ datasource.text }}</option>
+											{% else %}
+											<option value="{{ datasource.code }}">{{ datasource.text }}</option>
+											{% endif %}
+										{% endfor %}
+										</optgroup>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+
+						{% if (data_source_form_data is defined) %}
+						<div id="data_source_form" class="row form-group">
+						{{ data_source_form_data }}
+						</div>
+						{% else %}
+						<div id="data_source_form" class="row form-group visually-hidden">
+						{{ data_source_form_data }}
+						</div>
+						{% endif %}
+
+						<div class="row form-group" data-section="pmp">
+							<label class="col-sm-2 col-form-label" for="input-shuffle"><span data-bs-toggle="tooltip" title="{{ entry_shuffle_help }}">{{ entry_shuffle }}</span></label>
+							<div class="col-sm-10">
+								<div class="btn-group switch">
+									<label for="#radio_shuffle_1" class="btn btn-outline-secondary {{ (shuffle) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_shuffle1" name="shuffle" value="1" {{ (shuffle) ? 'checked="checked"' }}/>{{ text_yes }}
+									</label>
+									<label for="#radio_shuffle_2" class="btn btn-outline-secondary {{ (not shuffle) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_shuffle2" name="shuffle" value="0" {{ (not shuffle) ? 'checked="checked"' }}/>{{ text_no }}
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="pmp">
+							<label class="col-sm-2 col-form-label" for="input-cache">{{ entry_cache }}</label>
+							<div class="col-sm-10">
+								<div class="input-group switch">
+									<label for="#radio_cache_1" class="btn btn-outline-secondary {{ (cache) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_cache1" name="cache" value="1" {{ (cache) ? 'checked="checked"' }}/>{{ text_yes }}
+									</label>
+									<label for="#radio_cache_2" class="btn btn-outline-secondary {{ (not cache) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_cache2" name="cache" value="0" {{ (not cache) ? 'checked="checked"' }}/>{{ text_no }}
+									</label>
+									<select name="cache_expire" id="input-cache" class="form-select">
+										{% for value, text in cache_expire_options %}
+											{% if (cache_expire == value) %}
+											<option value="{{ value }}" selected="selected">{{ text }}</option>
+											{% else %}
+											<option value="{{ value }}">{{ text }}</option>
+											{% endif %}
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="compatibility">
+							<label class="col-sm-2 col-form-label" for="input-compat"><span data-bs-toggle="tooltip" title="{{ entry_compat_help }}">{{ entry_compat }}</span></label>
+							<div class="col-sm-10">
+								<div class="btn-group switch">
+									<label for="#radio_compat_1" class="btn btn-outline-secondary {{ (compat) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_compat1" name="compat" value="1" {{ (compat) ? 'checked="checked"' }}/>{{ text_yes }}
+									</label>
+									<label for="#radio_compat_2" class="btn btn-outline-secondary {{ (not compat) ? 'active' }}"> 
+										<input type="radio" class="btn-check" id="radio_compat2" name="compat" value="0" {{ (not compat) ? 'checked="checked"' }}/>{{ text_no }}
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="row form-group" data-section="compatibility">
+							<label class="col-sm-2 col-form-label" for="input-template"><span data-bs-toggle="tooltip" title="{{ entry_template_help }}">{{ entry_template }}</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="template" value="{{ template }}" placeholder="{{ entry_template }}" id="input-template" class="form-control" />
+								<div class="form-text" id="dynamic_description"></div>
+							</div>
+						</div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function() {
+
+	function initGroup() {
+		$('select[name=data_source]').trigger('change');
+	}
+
+	function generateDynamicDescription() {
+		let controller, view;
+		if ($('input[name=compat]:checked').val() == 1) {
+			controller = 'extension/opencart/module/featured';
+			if ($('input[name=template]').val() == 'extension/pmp/module/pmp') {
+				$('input[name=template]').val('extension/opencart/module/featured');
+			}
+		} else {
+			controller = 'extension/pmp/module/pmp';
+		}
+		if ($('input[name=template]').val() !== '') {
+			view = $('input[name=template]').val();
+		} else {
+			view = controller;
+		}
+		$('#dynamic_description').html(`{{ entry_dynamic_desc_data }}`);
+	}
+	
+	$('input[type=radio][name=compat]').on('change', generateDynamicDescription);
+	$('input[name=template]').on('input', generateDynamicDescription);
+
+	$('select[name=data_source]').on('change', function(e) {
+		let datasource = $('select[name=data_source] option:selected').val();
+		$.ajax({
+			url: '{{ data_source_link }}',
+			dataType: 'html',
+			method: 'get',
+			data : {
+				datasource: encodeURIComponent(datasource),
+				module_id: {{ module_id }}
+			},
+			beforeSend: function() {
+				$('select[name=data_source]').prop('disabled', true);
+				$('#spinner').addClass('active');
+				$('.tooltip').remove();
+			},
+			success: function(html) {
+				$('#data_source_form').html(html);
+				if ($('#data_source_form').html().trim() == '') {
+					$('#data_source_form').addClass('visually-hidden');
+				} else {
+					$('#data_source_form').removeClass('visually-hidden');
+				}
+			},
+			complete: function() {
+				$('#spinner').removeClass('active');				
+				$('select[name=data_source]').prop('disabled', false);
+				$('.tooltip').remove();
+				$('#form_module [data-bs-toggle=tooltip]').tooltip({container:'body'});
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	});
+
+	$('#button-fill').on('click', function(e) {
+		e.preventDefault();
+		let item_selected = $('select[name=data_source] option:selected');
+		let group_text = item_selected.text().trim();
+		let mode_text = $('#data_source_form').find('input[name=mode]:checked').closest('label').text().trim();
+		if (mode_text !== '') {
+			group_text += ' - ' + mode_text;
+		}
+		$('#input-name').val(group_text);
+	});
+	
+	$('#form-module').delegate('.switch > label', 'click', function(e) {
+		$(this).closest('.switch').find('label').removeClass('active');
+		$(this).toggleClass('active');
+		$(this).find('input').prop('checked', true).trigger('change');
+	});
+
+	$('[data-countdown]').each(function(index, value) {
+		let tid = setInterval(() => {
+			console.log('asd');
+			let current = parseInt($(value).find('.countdown').text().match(/(\d+)/));
+			$(value).find('.countdown').text('[' + (current - 1) + ']');
+			if (current == 1) {
+				clearInterval(tid);
+				$(value).remove();
+			}
+		}, 1000);
+	});
+
+	generateDynamicDescription();
+
+});
+</script>
+{{ footer }}

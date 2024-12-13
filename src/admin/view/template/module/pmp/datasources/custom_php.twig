@@ -1,0 +1,15 @@
+<div class="row form-group" data-section="custom">
+	<label class="col-sm-2 col-form-label" for="input-php">{{ entry_custom_php }}</label>
+	<div class="col-sm-10">
+		<textarea name="php" cols="30" rows="10" class="form-control" id="input-php">{{ php }}</textarea>
+		{% if (text_info is defined) %}
+		<div class="form-text">{{ text_info }}</div>
+		{% endif %}
+	</div>
+</div>
+<style>
+#form-module .form-group[data-section="custom"] {
+	background-color: #fff4d9;
+	border-left: 5px solid #ffd166;
+}
+</style>
