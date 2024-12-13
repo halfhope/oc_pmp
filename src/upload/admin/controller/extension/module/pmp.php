@@ -3,7 +3,7 @@
 class ControllerExtensionModulePMP extends Controller {
 	private $error = array();
 
-	private $_version 		= '1.0';
+	private $_version 		= '1.1';
 	private $_name 			= 'PMP';
 	public 	$_route 		= 'extension/module/pmp';
 	public 	$_model 		= 'model_extension_module_pmp';
