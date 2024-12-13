@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 class ModelExtensionModulePMPDataSourcesGlobalCustom extends Model {
 	

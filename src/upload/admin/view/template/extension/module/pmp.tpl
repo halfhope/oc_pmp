@@ -39,19 +39,19 @@ button.btn {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	display: flex;
-    align-items: center;
+	align-items: center;
 	border-left: 5px solid #dfdfdf;
 }
 .form-group + #data_source_form[class="form-group"] {
-    border-top: 1px dashed #c1c1c1;
+	border-top: 1px dashed #c1c1c1;
 }
 #data_source_form[class="form-group"] + .form-group {
-    border-top: 1px dashed #c1c1c1;
+	border-top: 1px dashed #c1c1c1;
 }
 .form-group#data_source_form{
-    margin: 0px -15px 0px -15px;
+	margin: 0px -15px 0px -15px;
 	padding:0px;
-    display: block;
+	display: block;
 }
 #data_source_form .form-group{
 	margin-left:-5px;
@@ -66,7 +66,7 @@ button.btn {
 }
 #dynamic_description .well-sm {
 	width: 100%;
-    display: block;
+	display: block;
 }
 #form-module .alert {
 	margin-bottom: 0;
@@ -99,8 +99,9 @@ button.btn {
 	background-color: #f4ffed;
 	border-left: 5px solid #b1db95;
 }
-#form-module input[type="text"], #form-module select {
-	height: 36.56px!important;
+#form-module .form-group[data-section="compatibility"] {
+	background-color: #f7f2ff;
+	border-left: 5px solid #c4a0ff;
 }
 #form-module input[name="products_search"] {
 	margin-bottom: 5px!important;
@@ -114,6 +115,23 @@ option[value="rd_recommendation"],option[value="rd_similar"]{
 			<div class="pull-right">
 				<button type="submit" form="form-module" data-toggle="tooltip" title="<?php echo $button_save ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
 				<a href="<?php echo $cancel ?>" data-toggle="tooltip" title="<?php echo $button_cancel ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
+				<div class="btn-group" data-toggle="tooltip" title="<?php echo $button_modules; ?>">
+					<a href="<?php echo $modules_link; ?>" type="button" class="btn btn-success"><?php echo $button_modules; ?></a>
+					<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Dropdown</span>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a href="<?php echo $add_module; ?>"><?php echo $button_add; ?></a></li>
+						<?php if (!empty($modules)) { ?>
+						<li role="separator" class="divider"></li>
+						<li class="dropdown-header"><?php echo $button_modules; ?></li>
+						<?php foreach ($modules as $module) { ?> 
+						<li><a href="<?php echo $module['edit']; ?>"><?php echo $module['name']; ?></a></li>
+						<?php } ?>
+						<?php } ?>
+					</ul>
+				</div>
 			</div>
 			<h1><?php echo $heading_title ?></h1>
 			<ul class="breadcrumb">
@@ -136,7 +154,7 @@ option[value="rd_recommendation"],option[value="rd_similar"]{
 		<?php } ?>
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_edit ?></h3>
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $text_edit ?></h3><h3 class="panel-title pull-right">v<?php echo $version ?></h3>
 				<?php if (isset($sections)) { ?>
 				<div class="pull-right">
 					<?php foreach ($sections as $section) { ?>
@@ -244,11 +262,11 @@ option[value="rd_recommendation"],option[value="rd_similar"]{
 						<label class="col-sm-2 control-label" for="input-shuffle"><span data-toggle="tooltip" title="<?php echo $entry_shuffle_help ?>"><?php echo $entry_shuffle ?></span></label>
 						<div class="col-sm-10">
 							<div class="switch btn-group">
-								<label class="btn btn-default <?php echo ($shuffle) ? 'active' : '' ?>"> 
-									<input type="radio" name="shuffle" value="1" <?php echo ($shuffle) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
+								<label for="#radio_shuffle1" class="btn btn-default <?php echo ($shuffle) ? 'active' : '' ?>"> 
+									<input type="radio" id="radio_shuffle1" name="shuffle" value="1" <?php echo ($shuffle) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
 								</label>
-								<label class="btn btn-default <?php echo (!$shuffle) ? 'active' : '' ?>"> 
-									<input type="radio" name="shuffle" value="0" <?php echo (!$shuffle) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
+								<label for="#radio_shuffle2" class="btn btn-default <?php echo (!$shuffle) ? 'active' : '' ?>"> 
+									<input type="radio" id="radio_shuffle2" name="shuffle" value="0" <?php echo (!$shuffle) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
 								</label>
 							</div>
 						</div>
@@ -259,15 +277,15 @@ option[value="rd_recommendation"],option[value="rd_similar"]{
 						<div class="col-sm-10">
 							<div class="input-group">
 								<span class="input-group-btn switch">
-										<label class="btn btn-default <?php echo ($cache) ? 'active' : '' ?>"> 
-											<input type="radio" name="cache" value="1" <?php echo ($cache) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
+										<label for="#radio_cache1" class="btn btn-default <?php echo ($cache) ? 'active' : '' ?>"> 
+											<input type="radio" id="radio_cache1" name="cache" value="1" <?php echo ($cache) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
 										</label>
-										<label class="btn btn-default <?php echo (!$cache) ? 'active' : '' ?>"> 
-											<input type="radio" name="cache" value="0" <?php echo (!$cache) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
+										<label for="#radio_cache2" class="btn btn-default <?php echo (!$cache) ? 'active' : '' ?>"> 
+											<input type="radio" id="radio_cache2" name="cache" value="0" <?php echo (!$cache) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
 										</label>
 								</span>
 								<select name="cache_expire" id="input-cache" class="form-control">
-									<?php foreach ($cache_expire_options as $text => $value) { ?>
+									<?php foreach ($cache_expire_options as $value => $text) { ?>
 										<?php if ($cache_expire == $value) { ?>
 										<option value="<?php echo $value ?>" selected="selected"><?php echo $text ?></option>
 										<?php } else { ?>
@@ -279,30 +297,25 @@ option[value="rd_recommendation"],option[value="rd_similar"]{
 						</div>
 					</div>
 
-					<div class="form-group" data-section="pmp">
+					<div class="form-group" data-section="compatibility">
 						<label class="col-sm-2 control-label" for="input-compat"><span data-toggle="tooltip" title="<?php echo $entry_compat_help ?>"><?php echo $entry_compat ?></span></label>
 						<div class="col-sm-10">
 							<div class="switch btn-group">
-								<label class="btn btn-default <?php echo ($compat) ? 'active' : '' ?>"> 
-									<input type="radio" name="compat" value="1" <?php echo ($compat) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
+								<label for="#radio_compat1" class="btn btn-default <?php echo ($compat) ? 'active' : '' ?>"> 
+									<input type="radio" id="radio_compat1" name="compat" value="1" <?php echo ($compat) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
 								</label>
-								<label class="btn btn-default <?php echo (!$compat) ? 'active' : '' ?>"> 
-									<input type="radio" name="compat" value="0" <?php echo (!$compat) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
+								<label for="#radio_compat2" class="btn btn-default <?php echo (!$compat) ? 'active' : '' ?>"> 
+									<input type="radio" id="radio_compat2" name="compat" value="0" <?php echo (!$compat) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
 								</label>
 							</div>
 						</div>
 					</div>
 
-					<div class="form-group" data-section="pmp">
+					<div class="form-group" data-section="compatibility">
 						<label class="col-sm-2 control-label" for="input-template"><span data-toggle="tooltip" title="<?php echo $entry_template_help ?>"><?php echo $entry_template ?></span></label>
 						<div class="col-sm-10">
 							<input type="text" name="template" value="<?php echo $template ?>" placeholder="<?php echo $entry_template ?>" id="input-template" class="form-control" />
-						</div>
-					</div>
-
-					<div class="form-group" data-section="pmp">
-						<label class="col-sm-2 control-label" for=""><?php echo $entry_dynamic_desc ?></label>
-						<div class="col-sm-10" id="dynamic_description">
+							<div class="help-block" id="dynamic_description"></div>
 						</div>
 					</div>
 
@@ -322,6 +335,9 @@ $(document).ready(function() {
 		let controller, view;
 		if ($('input[name=compat]:checked').val() == 1) {
 			controller = 'extension/module/featured';
+			if ($('input[name=template]').val() == 'extension/module/pmp') {
+				$('input[name=template]').val('extension/module/featured');
+			}
 		} else {
 			controller = 'extension/module/pmp';
 		}
@@ -330,7 +346,7 @@ $(document).ready(function() {
 		} else {
 			view = controller;
 		}
-		$('#dynamic_description').html(`<div class="alert alert-info"><?php echo $entry_dynamic_desc_data ?></div>`);
+		$('#dynamic_description').html(`<?php echo $entry_dynamic_desc_data ?>`);
 	}
 	
 	$('input[type=radio][name=compat]').on('change', generateDynamicDescription);

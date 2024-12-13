@@ -1,23 +1,29 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 class ModelExtensionModulePMPGroupsARG extends Model {
 
-	protected $use_main_category_id = false;
-	protected $category_ids = [];
+	protected 	$use_main_category_id 	= false;
+	protected 	$category_ids 			= [];
 	
-	public function getCachePrecomputedParams(&$setting) {
+	public function getCachePrecomputedParams($setting) {
 		if ($setting['mode'] == 2) {
+
 			$setting['precomputed_categories'] = $this->getCategoryIds($setting); 
 			$setting['precomputed_manufacturers'] = $this->getManufacturerId($setting);
 
-			$index = hash('crc32b', json_encode([
-				'precomputed_categories' => $setting['precomputed_categories'], 
-				'precomputed_manufacturers' => $setting['precomputed_manufacturers']
+			$setting['index'] = hash('crc32b', json_encode([
+				$setting['precomputed_categories'], 
+				$setting['precomputed_manufacturers']
 			]));
+
 		} else {
-			$index = 1;
+			$setting['index'] = 1;
 		}
-		return $index;
+
+		return $setting;
 	}
 
 	public function getCategoryIds($consider_categories = true) {
@@ -29,7 +35,7 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 			}
 		} elseif (isset($this->request->get['category_id'])) {
 			$category_ids[] = (int) $this->request->get['category_id'];
-		} elseif ($this->request->get['route'] == 'product/product' && $consider_categories) {
+		} elseif (isset($this->request->get['route']) && $this->request->get['route'] == 'product/product' && $consider_categories) {
 
 			if (isset($this->request->get['product_id'])) {
 				$product_id = (int) $this->request->get['product_id'];
@@ -48,7 +54,7 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 		$manufacturer_id = 0;
 		if (isset($this->request->get['manufacturer_id'])) {
 			$manufacturer_id = (int) $this->request->get['manufacturer_id'];
-		} elseif ($this->request->get['route'] == 'product/product' && $consider_manufacturers) {
+		} elseif (isset($this->request->get['route']) && $this->request->get['route'] == 'product/product' && $consider_manufacturers) {
 			$product_id      = (int) $this->request->get['product_id'];
 			$query           = $this->db->query("SELECT manufacturer_id FROM " . DB_PREFIX . "product WHERE product_id = " . (int) $product_id);
 			$manufacturer_id = (int) $query->num_rows ? $query->row['manufacturer_id'] : 0;
@@ -96,6 +102,14 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 	}
 
 	public function buildProductQuery($setting) {
+		// checkbox
+		$setting['invert'] = (isset($setting['invert']) ? $setting['invert'] : false);
+		
+		// migration
+		$setting['stock_status'] = (isset($setting['stock_status']) ? $setting['stock_status'] : []);
+		$setting['quantity_expression'] = isset($setting['quantity_expression']) ? htmlspecialchars_decode($setting['quantity_expression']) : '>';
+		$setting['quantity'] = isset($setting['quantity']) ? $setting['quantity'] : 0;
+
 		$config_customer_group_id = (int) $this->config->get('config_customer_group_id');
 		$config_language_id = (int) $this->config->get('config_language_id');
 		$config_store_id = (int) $this->config->get('config_store_id');
@@ -133,7 +147,12 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 		$where[] = "pd.language_id = '" . $config_language_id . "'";
 		$where[] = "p2s.store_id = '" . $config_store_id . "'";
 		$where[] = "p.status = '1'";
-		$where[] = "p.quantity > 1";
+		$where[] = "p.quantity " . $setting['quantity_expression'] . " " . (int) $setting['quantity'];
+		
+		if ($setting['stock_status']) {
+			$where[] = "p.stock_status_id IN (" . implode(',', $setting['stock_status']) . ")"; 
+		}
+
 		$where = implode(' AND ', array_filter($where));
 
 		$sort_order = $this->getSortOrder($setting);

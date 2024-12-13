@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 require_once DIR_APPLICATION . "model/extension/module/pmp/groups/arg.php";
 

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 require_once DIR_APPLICATION . "model/extension/module/pmp/groups/arg.php";
 
@@ -6,6 +9,7 @@ class ModelExtensionModulePMPDataSourcesARGDiscount extends ModelExtensionModule
 	
 	public function getData($setting) {
 		$product_data = [];
+
 		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id " . $fields . "
