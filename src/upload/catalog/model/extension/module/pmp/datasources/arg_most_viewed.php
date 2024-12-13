@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 require_once DIR_APPLICATION . "model/extension/module/pmp/groups/arg.php";
 
@@ -9,7 +12,7 @@ class ModelExtensionModulePMPDataSourcesARGMostViewed extends ModelExtensionModu
 
 		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
 
-		$sql = "SELECT p.product_id, " . $fields . "
+		$sql = "SELECT p.product_id " . $fields . "
 		FROM " . DB_PREFIX . "product p 
 			" . $join . " 
 		WHERE 

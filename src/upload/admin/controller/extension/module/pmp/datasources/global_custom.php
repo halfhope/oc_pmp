@@ -1,14 +1,17 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 class ControllerExtensionModulePMPDataSourcesGlobalCustom extends Controller {
 
-    private $_route = 'extension/module/pmp/datasources/global_custom';
-    
-    public function getForm($module_id = 0) {
+	private $_route = 'extension/module/pmp/datasources/global_custom';
+	
+	public function getForm($module_id = 0) {
 		
-        $this->load->language($this->_route);
+		$this->load->language($this->_route);
 
-        $module_info = [];
+		$module_info = [];
 		if ($module_id !== 0) {
 			$this->load->model('setting/module');
 			$module_info = $this->model_setting_module->getModule($module_id);
@@ -40,12 +43,12 @@ class ControllerExtensionModulePMPDataSourcesGlobalCustom extends Controller {
 			}
 		}
 
-        $data['autocomplete'] = html_entity_decode($this->url->link($this->_route . '/product_autocomplete', 'user_token=' . $this->session->data['user_token'], true));
+		$data['autocomplete'] = html_entity_decode($this->url->link($this->_route . '/product_autocomplete', 'user_token=' . $this->session->data['user_token'], true));
 
-        return $this->load->view($this->_route, $data);
-    }
-    
-    public function product_autocomplete():void {
+		return $this->load->view($this->_route, $data);
+	}
+	
+	public function product_autocomplete() {
 		
 		$json = [];
 		

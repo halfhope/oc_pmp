@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 require_once DIR_APPLICATION . "model/extension/module/pmp/groups/arg.php";
 
@@ -17,7 +20,7 @@ class ModelExtensionModulePMPDataSourcesARGRandom extends ModelExtensionModulePM
 			" . $join . " 
 		WHERE 
 			" . $where . " 
-		ORDER BY " . product_id;
+		ORDER BY " . $sort_order;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {

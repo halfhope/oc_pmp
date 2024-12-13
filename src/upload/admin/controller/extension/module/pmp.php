@@ -1,21 +1,57 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 class ControllerExtensionModulePMP extends Controller {
-	private $error = array();
 
-	private $_version 		= '1.1';
-	private $_name 			= 'PMP';
 	public 	$_route 		= 'extension/module/pmp';
 	public 	$_model 		= 'model_extension_module_pmp';
+	private $_version 		= '1.2';
+
+	private $_events = [
+		[
+			'trigger'	=> 'catalog/controller/extension/module/featured/before',
+			'action'	=> '/eventPMPFeaturedAddData'
+		],
+		[
+			'trigger'	=> 'catalog/view/extension/module/featured/before',
+			'action'	=> '/eventPMPFeaturedReplaceView'
+		]
+	];
+
+	private $error = [];
 
 	public function install() {
 		$this->load->model($this->_route);
 		$this->{$this->_model}->install();
+		
+		$this->load->model('setting/event');
+		foreach ($this->_events as $key => $_event) {
+			$_event = [
+				'code'        => 'pmp_' . substr(md5(http_build_query($_event)), 4),
+				'trigger'     => $_event['trigger'],
+				'action'      => $this->_route . $_event['action'],
+				'description' => '',
+				'status'      => 1,
+				'sort_order'  => 1
+			];
+
+			if(!$result = $this->model_setting_event->getEventByCode($_event['code'])) {
+				$this->model_setting_event->addEvent($_event['code'], $_event['trigger'], $_event['action']);
+			}
+		}
 	}
 
 	public function uninstall() {
 		$this->load->model($this->_route);
 		$this->{$this->_model}->uninstall();
+
+		$this->load->model('setting/event');
+		foreach ($this->_events as $key => $_event) {
+			$_event['code'] = 'pmp_' . substr(md5(http_build_query($_event)), 4);
+			$this->model_setting_event->deleteEventByCode($_event['code']);
+		}
 	}
 
 	public function index() {
@@ -24,10 +60,14 @@ class ControllerExtensionModulePMP extends Controller {
 		$this->load->language($this->_route);
 		
 		$this->document->setTitle($this->language->get('heading_title'));
-
+		$data['version'] = $this->_version;
+	
 		$this->load->model('setting/module');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			
+			$this->install();
+
 			if (!isset($this->request->get['module_id'])) {
 				$this->model_setting_module->addModule('pmp', $this->request->post);
 				$module_id = $this->db->getLastId();
@@ -58,28 +98,28 @@ class ControllerExtensionModulePMP extends Controller {
 			$data['success'] = '';
 		}
 
-		$data['breadcrumbs'] = array();
+		$data['breadcrumbs'] = [];
 
-		$data['breadcrumbs'][] = array(
+		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
-		);
+		];
 
-		$data['breadcrumbs'][] = array(
+		$data['breadcrumbs'][] = [
 			'text' => $this->language->get('text_extension'),
 			'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
-		);
+		];
 
 		if (!isset($this->request->get['module_id'])) {
-			$data['breadcrumbs'][] = array(
+			$data['breadcrumbs'][] = [
 				'text' => $this->language->get('heading_title'),
 				'href' => $this->url->link($this->_route, 'user_token=' . $this->session->data['user_token'], true)
-			);
+			];
 		} else {
-			$data['breadcrumbs'][] = array(
+			$data['breadcrumbs'][] = [
 				'text' => $this->language->get('heading_title'),
 				'href' => $this->url->link($this->_route, 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true)
-			);
+			];
 		}
 
 		if (!isset($this->request->get['module_id'])) {
@@ -92,7 +132,15 @@ class ControllerExtensionModulePMP extends Controller {
 		$data['data_source_link'] = html_entity_decode($this->url->link($this->_route . '/data_source', 'user_token=' . $this->session->data['user_token'], true));
 		
 		$data['module_id'] = isset($this->request->get['module_id']) ? $this->request->get['module_id'] : 0;
-		
+
+		$data['add_module'] = $this->url->link($this->_route, 'user_token=' . $this->session->data['user_token'], true);
+		$data['modules_link'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
+		$this->load->model('setting/module');
+		$data['modules'] = $this->model_setting_module->getModulesByCode('pmp');
+		foreach ($data['modules'] as $key => $value) {
+			$data['modules'][$key]['edit'] = $this->url->link($this->_route, 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $value['module_id'], true);
+		}
+
 		$data['groups'] = [];
 
 		$grps = glob(DIR_APPLICATION . 'controller/extension/module/pmp/groups/*.php', GLOB_BRACE);
@@ -108,10 +156,10 @@ class ControllerExtensionModulePMP extends Controller {
 
 				$this->load->language('extension/module/pmp/datasources/' . $datasource, 'extension');
 
-				$datasources[] = array(
+				$datasources[] = [
 					'code' => $datasource,
 					'text' => $this->language->get('extension')->get('heading_title')
-				);
+				];
 			}
 			
 			$this->load->language('extension/module/pmp/groups/' . $group, 'extension');
@@ -122,11 +170,11 @@ class ControllerExtensionModulePMP extends Controller {
 					return strnatcmp($b['text'], $a['text']);
 				});
 
-				$data['groups'][] = array(
+				$data['groups'][] = [
 					'code' => $group,
 					'text' => $this->language->get('extension')->get('heading_title'),
 					'datasources' => $datasources
-				);
+				];
 			}
 		}
 
@@ -137,12 +185,12 @@ class ControllerExtensionModulePMP extends Controller {
 
 			$this->load->language('extension/module/pmp/sections/' . $section, 'extension');
 
-			$data['sections'][] = array(
+			$data['sections'][] = [
 				'code' => $section,
 				'text' => $this->language->get('extension')->get('heading_title'),
 				'icon' => $this->language->get('extension')->get('fontawesome_icon'),
 				'href' => $this->url->link($this->_route . '/sections/' . $section, 'user_token=' . $this->session->data['user_token'], true)
-			);
+			];
 		}
 
 		$data['cache_expire_options'] = [
@@ -152,11 +200,11 @@ class ControllerExtensionModulePMP extends Controller {
 			168 => 	$this->language->get('text_cache_168'),
 			744 => 	$this->language->get('text_cache_744')
 		];
-        
-        $this->load->model('localisation/language');
-        $this->load->model('catalog/product');
 		
-        $data['languages']     = $this->model_localisation_language->getLanguages();
+		$this->load->model('localisation/language');
+		$this->load->model('catalog/product');
+		
+		$data['languages']     = $this->model_localisation_language->getLanguages();
 
 		$module_info = [];
 		if (isset($this->request->get['module_id'])) {
@@ -293,9 +341,9 @@ class ControllerExtensionModulePMP extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-        if (count($this->request->post, COUNT_RECURSIVE) >= ini_get('max_input_vars')) {
-            $this->error['warning'] = $this->language->get('error_max_input_vars');
-        }
+		if (count($this->request->post, COUNT_RECURSIVE) >= ini_get('max_input_vars')) {
+			$this->error['warning'] = $this->language->get('error_max_input_vars');
+		}
 		return !$this->error;
 	}
 }

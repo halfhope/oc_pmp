@@ -1,13 +1,16 @@
 <?php
+/**
+ * @author Shashakhmetov Talgat <talgatks@gmail.com>
+ */
 
 class ControllerExtensionModulePMPDataSourcesCustomSQL extends Controller {
 
-    private $_route = 'extension/module/pmp/datasources/custom_sql';
-    
-    public function getForm($module_id = 0) {
-        $this->load->language($this->_route);
-        
-        $module_info = [];
+	private $_route = 'extension/module/pmp/datasources/custom_sql';
+	
+	public function getForm($module_id = 0) {
+		$this->load->language($this->_route);
+		
+		$module_info = [];
 		if ($module_id !== 0) {
 			$this->load->model('setting/module');
 			$module_info = $this->model_setting_module->getModule($module_id);
@@ -23,7 +26,7 @@ class ControllerExtensionModulePMPDataSourcesCustomSQL extends Controller {
 			$data['sql'] = '';
 		}
 
-        return $this->load->view($this->_route, $data);
-    }
-    
+		return $this->load->view($this->_route, $data);
+	}
+	
 }
