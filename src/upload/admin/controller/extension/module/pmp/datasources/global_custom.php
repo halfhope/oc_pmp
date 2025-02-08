@@ -11,6 +11,27 @@ class ControllerExtensionModulePMPDataSourcesGlobalCustom extends Controller {
 		
 		$data = $this->load->language($this->_route);
 		
+		$this->load->model('localisation/stock_status');
+
+		$data['stock_statuses']		= $this->model_localisation_stock_status->getStockStatuses([]);
+		$data['qty_expressions']	= ['<', '<=', '=', '>=', '>'];
+
+		$data['sorts'] = [
+			'as_is' => $this->language->get('text_sort_order_as_is'),
+			'p.sort_order' => $this->language->get('text_sort_default'),
+			'p.model' => $this->language->get('text_sort_model'),
+			'pd.name' => $this->language->get('text_sort_name'),
+			'p.price' => $this->language->get('text_sort_price'),
+			'p.quantity' => $this->language->get('text_sort_quantity'),
+			'p.rating' => $this->language->get('text_sort_rating'),
+			'p.date_added' => $this->language->get('text_sort_added')
+		];
+
+		$data['orders'] = [
+			'ASC' => $this->language->get('text_order_asc'),
+			'DESC' => $this->language->get('text_order_desc')
+		];
+
 		$module_info = [];
 		if ($module_id !== 0) {
 			$this->load->model('extension/module');
@@ -45,6 +66,40 @@ class ControllerExtensionModulePMPDataSourcesGlobalCustom extends Controller {
 		}
 
 		$data['autocomplete'] = html_entity_decode($this->url->link($this->_route . '/product_autocomplete', 'token=' . $this->session->data['token'], true));
+
+		if (isset($module_info['quantity'])) {
+			$data['quantity'] = $module_info['quantity'];
+		} else {
+			$data['quantity'] = 0;
+		}
+
+		if (isset($module_info['quantity_expression'])) {
+			$data['quantity_expression'] = htmlspecialchars_decode($module_info['quantity_expression']);
+		} else {
+			$data['quantity_expression'] = '>';
+		}
+
+		if (isset($module_info['stock_status'])) {
+			if (!empty($module_info['stock_status'])) {
+				$data['stock_status'] = $module_info['stock_status'];
+			} else {
+				$data['stock_status'] = [];
+			}
+		} else {
+			$data['stock_status'] = [];
+		}
+
+		if (isset($module_info['sort'])) {
+			$data['sort'] = $module_info['sort'];
+		} else {
+			$data['sort'] = 'as_is';
+		}
+
+		if (isset($module_info['order'])) {
+			$data['order'] = $module_info['order'];
+		} else {
+			$data['order'] = 'ASC';
+		}
 
 		return $this->load->view($this->_route, $data);
 	}
