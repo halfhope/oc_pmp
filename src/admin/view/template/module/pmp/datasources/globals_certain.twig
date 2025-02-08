@@ -17,6 +17,84 @@
 	</div>
 </div>
 
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label"><span data-bs-toggle="tooltip" title="{{ entry_stock_status_help }}">{{ entry_stock_status }}</span></label>
+	<div class="col-sm-10">
+		<div class="well well-sm">
+			<table class="table table-striped">
+			{% for stock_status_key, stock_status_data in stock_statuses %}
+			<tr class="form-check-label">
+				<td class="checkbox">
+				<label>
+					{% if stock_status_data.stock_status_id in stock_status %}
+					<input type="checkbox" name="stock_status[]" class="form-check-input" value="{{ stock_status_data.stock_status_id }}" checked="checked" />
+					{{ stock_status_data.name }}
+					{% else %}
+					<input type="checkbox" name="stock_status[]" class="form-check-input" value="{{ stock_status_data.stock_status_id }}" />
+					{{ stock_status_data.name }}
+					{% endif %}
+				</label> 
+				</td>
+			</tr>
+			{% endfor %}
+			</table>
+		</div>
+		<a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', true);return false;">{{ text_select_all }}</a> / <a href="#" onclick="$(this).parent().find(':checkbox').prop('checked', false);return false;">{{ text_unselect_all }}</a> / <a href="#" onclick="invertSelection(this);return false;">{{ text_invert_selection }}</a>
+	</div>
+</div>
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-quantity_expression">{{ entry_quantity }}</label>
+	<div class="col-sm-10">
+		<div class="row">
+			<div class="col-sm-6">
+				<select name="quantity_expression" id="input-quantity_expression" class="form-select">
+				{% for expression in qty_expressions %}
+					{% if quantity_expression == expression %}
+					<option value="{{ expression }}" selected="selected">{{ expression }}</option>
+					{% else %}
+					<option value="{{ expression }}">{{ expression }}</option>
+					{% endif %}
+				{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-6">
+				<input type="text" name="quantity" value="{{ quantity }}" placeholder="{{ entry_quantity }}" id="input-quantity" class="form-control" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row form-group" data-section="arg">
+	<label class="col-sm-2 col-form-label" for="input-sort">{{ entry_sort_order }}</label>
+	<div class="col-sm-10">
+		<div class="row">
+			<div class="col-sm-6">
+				<select name="sort" id="input-sort" class="form-select">
+					{% for sort_index, sort_name in sorts %}
+						{% if sort == sort_index %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ sort_index }}" selected="selected">{{ sort_name }}</option>
+						{% else %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ sort_index }}">{{ sort_name }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+			<div class="col-sm-6">
+				<select name="order" id="input-order" class="form-select">
+					{% for order_index, order_name in orders %}
+						{% if order == order_index %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ order_index }}" selected="selected">{{ order_name }}</option>
+						{% else %}
+						<option data-group="{{ (group_index is defined) ? group_index : '' }}" value="{{ order_index }}">{{ order_name }}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 $('#product_id').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
