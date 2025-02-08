@@ -156,8 +156,9 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 		$where = implode(' AND ', array_filter($where));
 
 		$sort_order = $this->getSortOrder($setting);
+		$limit = $this->getLimit($setting);
 
-		return [$fields, $join, $where, $sort_order];
+		return [$fields, $join, $where, $sort_order, $limit];
 	}
 
 	public function getSortOrder($data) {
@@ -182,6 +183,13 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 			$sql .= " ASC, LCASE(pd.name) ASC";
 		}
 
+		return $sql;
+	}
+
+	public function getLimit($data) {
+		
+		$sql = '';
+		
 		if (isset($data['start']) || isset($data['limit'])) {
 			if (!isset($data['start']) || $data['start'] < 0) {
 				$data['start'] = 0;
@@ -193,8 +201,7 @@ class ModelExtensionModulePMPGroupsARG extends Model {
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
-
+		
 		return $sql;
 	}
-
 }

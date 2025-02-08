@@ -10,7 +10,7 @@ class ModelExtensionModulePMPDataSourcesARGDiscussed extends ModelExtensionModul
 	public function getData($setting) {
 		$product_data = [];
 
-		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id, COUNT(r1.product_id) AS review_count " . $fields . "
 		FROM " . DB_PREFIX . "product p 
@@ -20,7 +20,7 @@ class ModelExtensionModulePMPDataSourcesARGDiscussed extends ModelExtensionModul
 			" . $where . " 
 			AND r1.status = '1'
 		GROUP BY p.product_id 
-		ORDER BY review_count DESC, " . $sort_order;
+		ORDER BY review_count DESC, " . $sort_order . $limit;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {

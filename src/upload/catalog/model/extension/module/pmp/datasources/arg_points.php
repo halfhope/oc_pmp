@@ -10,7 +10,7 @@ class ModelExtensionModulePMPDataSourcesARGPoints extends ModelExtensionModulePM
 	public function getData($setting) {
 		$product_data = [];
 
-		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id, pr.points " . $fields . "
 		FROM " . DB_PREFIX . "product p 
@@ -21,7 +21,7 @@ class ModelExtensionModulePMPDataSourcesARGPoints extends ModelExtensionModulePM
 			AND pr.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' 
 			AND pr.points > 0
 		GROUP BY p.product_id 
-		ORDER BY pr.points DESC, " . $sort_order;
+		ORDER BY pr.points DESC, " . $sort_order . $limit;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {
