@@ -12,14 +12,14 @@ class ARGRandom extends \Opencart\Catalog\Model\Extension\Pmp\Module\Pmp\Groups\
 		$limit = $setting['limit'];
 		unset($setting['limit']);
 
-		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id " . $fields . "
 		FROM " . DB_PREFIX . "product p 
 			" . $join . " 
 		WHERE 
 			" . $where . " 
-		ORDER BY " . $sort_order;
+		ORDER BY " . $sort_order . $limit;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {
