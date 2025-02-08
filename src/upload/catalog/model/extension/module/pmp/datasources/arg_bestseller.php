@@ -10,7 +10,7 @@ class ModelExtensionModulePMPDataSourcesARGBestseller extends ModelExtensionModu
 	public function getData($setting) {
 		$product_data = [];
 
-		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id, SUM(op.quantity) as total " . $fields . "
 		FROM " . DB_PREFIX . "product p 
@@ -21,7 +21,7 @@ class ModelExtensionModulePMPDataSourcesARGBestseller extends ModelExtensionModu
 			" . $where . " 
 			AND o.order_status_id > '0' 
 		GROUP BY p.product_id 
-		ORDER BY total DESC, " . $sort_order;
+		ORDER BY total DESC, " . $sort_order . $limit;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {

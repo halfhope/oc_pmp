@@ -10,7 +10,7 @@ class ModelExtensionModulePMPDataSourcesARGSpecial extends ModelExtensionModuleP
 	public function getData($setting) {
 		$product_data = [];
 
-		list($fields, $join, $where, $sort_order) = $this->buildProductQuery($setting);
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
 
 		$sql = "SELECT p.product_id " . $fields . "
 		FROM " . DB_PREFIX . "product p 
@@ -21,7 +21,7 @@ class ModelExtensionModulePMPDataSourcesARGSpecial extends ModelExtensionModuleP
 			AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' 
 			AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))
 		GROUP BY p.product_id 
-		ORDER BY ps.priority ASC, " . $sort_order;
+		ORDER BY ps.priority ASC, " . $sort_order . $limit;
 
 		$query = $this->db->query($sql);
 		foreach ($query->rows as $result) {
