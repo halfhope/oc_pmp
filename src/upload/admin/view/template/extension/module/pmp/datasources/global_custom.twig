@@ -1,3 +1,7 @@
+
+<script src="view/javascript/jquery/Sortable.js"></script>
+<script src="view/javascript/jquery/jquery-sortable.js"></script>
+
 <div class="form-group" data-section="global">
 	<label class="col-sm-2 control-label" for="input-products">{{ entry_products }}</label>
 	<div class="col-sm-10">
@@ -5,8 +9,8 @@
 		<datalist id="list_products"></datalist>
 		<div id="product_id" class="well well-sm">
 			{% for product in products %}
-			<div id="product_id{{ product.id }}"><i class="fa fa-minus-circle"></i> {{ product.name }}
-			<input type="hidden" name="products[]" value="{{ product.id }}" />
+			<div id="product_id{{ product.id }}" class="well-sm-item"><i class="fa fa-minus-circle"></i>&nbsp;&nbsp;<i class="fa fa-hand-grab-o"></i>&nbsp;&nbsp;{{ product.name }}
+			<input type="hidden" name="products[{{ product.id }}][sort_order]" value="{{ product.sort_order }}" />
 			</div>
 			{% endfor %}
 		</div>
@@ -16,6 +20,18 @@
 <script>
 $('#product_id').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();
+});
+
+$('#product_id').sortable({
+	handle: '.well-sm-item',
+	animation: 150,
+	onEnd: function (evt) {
+		var orderIndex = 1;
+		$($(evt.item).parent().find('input[name*="sort_order"]')).each(function() {
+			$(this).val(orderIndex);
+			orderIndex++;
+		});
+	}
 });
 
 $('input[name=\'products_search\']').autocomplete({
@@ -34,9 +50,10 @@ $('input[name=\'products_search\']').autocomplete({
 		});
 	},
 	select: function(item) {
+		let sort_order = $('#product_id .well-sm-item').length;
 		$('input[name=\'products_search\']').val('');
 		$('#product_id' + item['value']).remove();
-		$('#product_id').append('<div id="product_id' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="products[]" value="' + item['value'] + '" /></div>');
+		$('#product_id').append('<div id="product_id' + item['value'] + '" class="well-sm-item"><i class="fa fa-minus-circle"></i>&nbsp;&nbsp;<i class="fa fa-hand-grab-o"></i>&nbsp;&nbsp;' + item['label'] + '<input type="hidden" name="products[' + item['value'] + '][sort_order]" value="' + sort_order + '" /></div>');
 		$('#product_id #product_id' + item['value']).click()
 	}
 });
@@ -46,5 +63,22 @@ $('input[name=\'products_search\']').autocomplete({
 #form-module .form-group[data-section="global"] {
 	background-color: #fff4d9;
 	border-left: 5px solid #ffd166;
+}
+.well-sm-item {
+	line-height: 2em;
+	padding: 2px;
+}
+.well-sm-item + .well-sm-item {
+	border-top: 1px solid #fff;
+}
+.well-sm-item input.well-sm-input {
+	width: 50px;
+	height: 26px!important;
+}
+.well-sm-item i.fa.fa-minus-circle:hover {
+	cursor: pointer;
+}
+.well-sm-item i.fa.fa-hand-grab-o:hover {
+	cursor: grab;
 }
 </style>

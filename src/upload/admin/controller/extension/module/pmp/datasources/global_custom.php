@@ -31,12 +31,13 @@ class ControllerExtensionModulePMPDataSourcesGlobalCustom extends Controller {
 
 		$this->load->model('catalog/product');
 
-		foreach ($products as $product_id) {
+		foreach ($products as $product_id => $product_form_data) {
 			$product_info = $this->model_catalog_product->getProduct($product_id);
 			
 			if ($product_info) {
 				$data['products'][] = [
 					'id' => $product_info['product_id'],
+					'sort_order' => $product_form_data['sort_order'],
 					'name' => html_entity_decode($product_info['name']),
 					'selected' => true
 				];
