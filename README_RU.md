@@ -114,6 +114,7 @@ PMP создает модули для вывода товаров и источ
 ## Лицензия
 
 * [GPL v3.0](LICENSE.MD)
+* Использует [sortable.js](https://github.com/components/RubaXa-Sortable) - Лицензия MIT
 
 ## Спасибо за использование моих дополнений!
 

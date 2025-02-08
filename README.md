@@ -115,6 +115,7 @@ If you have any questions, write to the support thread or send a private message
 ## License
 
 * [GPL v3.0](LICENSE.MD)
+* Contain [sortable.js](https://github.com/components/RubaXa-Sortable) - MIT License
 
 ## Thank You for Using My Extensions!
 
