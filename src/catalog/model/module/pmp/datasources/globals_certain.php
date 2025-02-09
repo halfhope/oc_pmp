@@ -8,7 +8,11 @@ class ARGGlobalsCertain extends \Opencart\System\Engine\Model {
 
 	public function getData($setting) {
 		$product_data = [];
-
+		
+		if (!isset($setting['products']) || empty($setting['products'])) {
+			return $product_data;
+		}
+		
 		$setting['product_ids'] = array_keys($setting['products']);
 
 		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
