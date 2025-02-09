@@ -94,6 +94,21 @@
 		</div>
 	</div>
 </div>
+
+<div class="form-group" data-section="global">
+	<label class="col-sm-2 control-label" for="input-show_landing_link"><span data-toggle="tooltip" title="<?php echo $entry_show_landing_link_help ?>"><?php echo $entry_show_landing_link ?></span></label>
+	<div class="col-sm-10">
+		<div class="switch btn-group">
+			<label class="btn btn-default <?php echo ($show_landing_link) ? 'active' : '' ?>"> 
+				<input type="radio" name="show_landing_link" value="1" <?php echo ($show_landing_link) ? 'checked="checked"' : '' ?>/><?php echo $text_yes ?>
+			</label>
+			<label class="btn btn-default <?php echo (!$show_landing_link) ? 'active' : '' ?>"> 
+				<input type="radio" name="show_landing_link" value="0" <?php echo (!$show_landing_link) ? 'checked="checked"' : '' ?>/><?php echo $text_no ?>
+			</label>
+		</div>
+	</div>
+</div>
+
 <script>
 $('#product_id').delegate('.fa-minus-circle', 'click', function() {
 	$(this).parent().remove();

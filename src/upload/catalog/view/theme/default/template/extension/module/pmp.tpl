@@ -1,4 +1,13 @@
 <h3><?php echo $heading_title; ?></h3>
+
+<?php if (isset($landing_link)) { ?>
+<div class="row">
+	<div class="col-sm-12">
+		<a href="<?php echo $landing_link; ?>" class="btn btn-default"><?php echo $button_landing_text; ?></a>
+	</div>
+</div>
+<?php } ?>
+
 <div class="row">
 	<?php foreach ($products as $product) { ?>
 	<div class="product-layout col-lg-3 col-md-3 col-sm-6 col-xs-12">
