@@ -25,6 +25,9 @@ $_['entry_quantity']                    = 'Product quantity';
 $_['entry_stock_status']                = 'Product stock status';
 $_['entry_stock_status_help']           = 'Left empty if not used';
 
+$_['entry_show_landing_link']                = 'Show link on landing page';
+$_['entry_show_landing_link_help']           = 'Upon activation, a \'Show more\' button will be displayed, leading to a landing page with the current product selection.';
+
 $_['entry_sort_order']      = 'Sort order';
 	$_['text_sort_default']     = 'Default';
 	$_['text_sort_name']        = 'Name';

@@ -5,4 +5,27 @@
 	<author>halfhope</author>
 	<code>products_module_pack</code>
 	<link>https://shtt.blog/</link>
+	<file path="catalog/controller/common/*.php">
+		<operation>
+			<search><![CDATA[$setting_info = $this->]]></search>
+			<add position="after"><![CDATA[				$setting_info['module_id'] = (int) $part[1];]]></add>
+		</operation>
+	</file>
+	
+	<file path="catalog/view/theme/*/extension/module/featured.tpl">
+		<operation>
+			<search><![CDATA[<div class="row">]]></search>
+			<add position="before"><![CDATA[
+{% if landing_link is defined %}
+<div class="row">
+	<div class="col-sm-12">
+		<a href="{{ landing_link }}" class="btn btn-default">{{ button_landing_text }}</a>
+	</div>
+</div>
+{% endif %}
+
+]]></add>
+		</operation>
+	</file>
+
 </modification>
