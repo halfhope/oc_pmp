@@ -183,6 +183,20 @@
 	</div>
 </div>
 
+<div class="form-group" data-section="arg">
+	<label class="col-sm-2 control-label" for="input-show_landing_link"><span data-toggle="tooltip" title="{{ entry_show_landing_link_help }}">{{ entry_show_landing_link }}</span></label>
+	<div class="col-sm-10">
+		<div class="switch btn-group">
+			<label for="#radio_show_landing_link1" class="btn btn-default {{ (show_landing_link) ? 'active' }}"> 
+				<input type="radio" id="radio_show_landing_link1" name="show_landing_link" value="1" {{ (show_landing_link) ? 'checked="checked"' }}/>{{ text_yes }}
+			</label>
+			<label for="#radio_show_landing_link2" class="btn btn-default {{ (not show_landing_link) ? 'active' }}"> 
+				<input type="radio" id="radio_show_landing_link2" name="show_landing_link" value="0" {{ (not show_landing_link) ? 'checked="checked"' }}/>{{ text_no }}
+			</label>
+		</div>
+	</div>
+</div>
+
 <script>
 function initMode(mode) {
 	$('.form-group[data-mode]').addClass('visually-hidden');

@@ -120,6 +120,12 @@ class ARG extends \Opencart\System\Engine\Controller {
 			$data['order'] = 'ASC';
 		}
 
+		if (isset($module_info['show_landing_link'])) {
+			$data['show_landing_link'] = $module_info['show_landing_link'];
+		} else {
+			$data['show_landing_link'] = 0;
+		}
+
 		return $data;
 	}
 }

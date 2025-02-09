@@ -28,6 +28,10 @@ class PMP extends \Opencart\System\Engine\Controller {
 
 		$data['heading_title'] = $setting['title'][$config_language_id];
 		
+		if ($setting['show_landing_link'] && isset($setting['module_id'])) {
+			$data['landing_link'] = $this->url->link('extension/module/pmp_landing', '&module_id=' . (int) $setting['module_id']);	
+		}		
+		
 		$data_items = [];
 		
 		if ($setting['cache']) {
