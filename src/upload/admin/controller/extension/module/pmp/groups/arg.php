@@ -26,7 +26,7 @@ class ControllerExtensionModulePMPGroupsARG extends Controller {
 			'pd.name' => $this->language->get('text_sort_name'),
 			'p.price' => $this->language->get('text_sort_price'),
 			'p.quantity' => $this->language->get('text_sort_quantity'),
-			'p.rating' => $this->language->get('text_sort_rating'),
+			'rating' => $this->language->get('text_sort_rating'),
 			'p.date_added' => $this->language->get('text_sort_added')
 		];
 
