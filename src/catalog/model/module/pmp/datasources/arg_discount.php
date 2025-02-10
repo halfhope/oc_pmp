@@ -30,4 +30,23 @@ class ARGDiscount extends \Opencart\Catalog\Model\Extension\Pmp\Module\Pmp\Group
 
 		return $product_data;
 	}
+	
+	public function getDataTotal($setting) {
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT COUNT(*) as total
+		FROM " . DB_PREFIX . "product p 
+			LEFT JOIN " . DB_PREFIX . "product_discount pd2 ON (p.product_id = pd2.product_id) 
+			" . $join . " 
+		WHERE  
+			" . $where . " 
+			AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' 
+			AND pd2.quantity > 0
+			AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW()))
+		GROUP BY p.product_id";
+
+		$query = $this->db->query($sql);
+
+		return (int) $query->row['total'];
+	}
 }
