@@ -11,7 +11,6 @@ class ControllerExtensionModulePMP extends Controller {
 	private $_data_source_model = '';
 
 	public function index($setting) {
-
 		$data = $this->load->language($this->_route);
 
 		$this->load->model($this->_route);
@@ -22,19 +21,40 @@ class ControllerExtensionModulePMP extends Controller {
 		$this->load->model($this->_data_source_route);
 
 		$config_language_id = $this->config->get('config_language_id');
-
-		$data['heading_title'] = $setting['title'][$config_language_id];
 		
-		if ($setting['show_landing_link'] && isset($setting['module_id'])) {
-			$data['landing_link'] = $this->url->link('extension/module/pmp_landing', '&module_id=' . (int) $setting['module_id']);	
-		}		
+		$data['heading_title'] = $setting['title'][$config_language_id];
 		
 		$data_items = [];
 		
+		// Compute cache_name
+		$name = implode('.', [
+			'pmp',
+			$setting['data_source'],
+			$this->config->get('config_store_id'),
+			$this->config->get('config_language_id'),
+			$this->config->get('config_customer_group_id'),
+			hash('crc32b', json_encode($setting))
+		]);
+
+		$class_name = preg_replace('/[^a-zA-Z0-9]/', '', $this->_data_source_model);
+
+		if (is_callable([$class_name, 'getCachePrecomputedParams'])) {
+			$setting = $this->{$this->_data_source_model}->getCachePrecomputedParams($setting);
+			$index = $setting['index'];
+		} else {
+			$index = 1;
+		}
+
+		$cache_params = [
+			'name' 	=> $name,
+			'index' => $index
+		];
+
+		// Cache
 		if ($setting['cache']) {
 			$this->initCache($setting['cache_expire']);
 
-			$cache_params = $this->cacheName($setting);
+			// $cache_params = $this->cacheName($setting);
 
 			$data_items = $this->getCache($cache_params);
 		}
@@ -46,6 +66,22 @@ class ControllerExtensionModulePMP extends Controller {
 			if ($setting['cache']) {
 				$this->setCache($cache_params, $data_items);
 			}
+		}
+
+		// Set landing page link 
+		if ($setting['show_landing_link'] && isset($setting['module_id'])) {
+			$data += $this->load->language('extension/module/pmp_landing');
+
+			if ($cache_params['index'] !== 1 && (!empty($setting['precomputed_categories']) || $setting['precomputed_manufacturers'] !== 0)) {
+				$params = '&params=' . base64_encode(json_encode([
+					'categories' => $setting['precomputed_categories'],
+					'manufacturers' => $setting['precomputed_manufacturers'],
+				]));
+			} else {
+				$params = '';
+			}
+
+			$data['landing_link'] = $this->url->link('extension/module/pmp_landing', '&module_id=' . (int) $setting['module_id'] . $params);	
 		}
 
 		if ($data_items) {
@@ -171,31 +207,31 @@ class ControllerExtensionModulePMP extends Controller {
 		}
 	}
 
-	private function cacheName(&$setting) {
+	// private function cacheName(&$setting) {
 
-		$name = implode('.', [
-			'pmp',
-			$setting['data_source'],
-			$this->config->get('config_store_id'),
-			$this->config->get('config_language_id'),
-			$this->config->get('config_customer_group_id'),
-			hash('crc32b', json_encode($setting))
-		]);
+	// 	$name = implode('.', [
+	// 		'pmp',
+	// 		$setting['data_source'],
+	// 		$this->config->get('config_store_id'),
+	// 		$this->config->get('config_language_id'),
+	// 		$this->config->get('config_customer_group_id'),
+	// 		hash('crc32b', json_encode($setting))
+	// 	]);
 
-		$class_name = preg_replace('/[^a-zA-Z0-9]/', '', $this->_data_source_model);
+	// 	$class_name = preg_replace('/[^a-zA-Z0-9]/', '', $this->_data_source_model);
 
-		if (is_callable([$class_name, 'getCachePrecomputedParams'])) {
-			$setting = $this->{$this->_data_source_model}->getCachePrecomputedParams($setting);
-			$index = $setting['index'];
-		} else {
-			$index = 1;
-		}
+	// 	if (is_callable([$class_name, 'getCachePrecomputedParams'])) {
+	// 		$setting = $this->{$this->_data_source_model}->getCachePrecomputedParams($setting);
+	// 		$index = $setting['index'];
+	// 	} else {
+	// 		$index = 1;
+	// 	}
 
-		return [
-			'name' 	=> $name,
-			'index' => $index
-		];
-	}
+	// 	return [
+	// 		'name' 	=> $name,
+	// 		'index' => $index
+	// 	];
+	// }
 
 	private function getCache($params) {
 		$cache = $this->pmp_cache->get($params['name']);
