@@ -31,6 +31,28 @@ class ModelExtensionModulePMPDataSourcesGlobalCustom extends Model {
 		return $product_data;
 	}
 
+	public function getDataTotal($setting) {
+		$product_data = [];
+		
+		if (!isset($setting['products']) || empty($setting['products'])) {
+			return $product_data;
+		}
+		
+		$setting['product_ids'] = array_keys($setting['products']);
+
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT count(*) as total
+		FROM " . DB_PREFIX . "product p 
+			" . $join . " 
+		WHERE 
+			" . $where;
+
+		$query = $this->db->query($sql);
+		
+		return $query->row['total'];
+	}
+
 	public function buildProductQuery($setting) {
 		// checkbox
 		$setting['invert'] = (isset($setting['invert']) ? $setting['invert'] : false);
