@@ -18,7 +18,7 @@ class ModelExtensionModulePMPDataSourcesARGDiscussed extends ModelExtensionModul
 			" . $join . " 
 		WHERE 
 			" . $where . " 
-			AND r1.status = '1'
+			AND r1.status = 1
 		GROUP BY p.product_id 
 		ORDER BY review_count DESC, " . $sort_order . $limit;
 
@@ -28,5 +28,23 @@ class ModelExtensionModulePMPDataSourcesARGDiscussed extends ModelExtensionModul
 		}
 
 		return $product_data;
+	}
+	
+	public function getDataTotal($setting) {
+		
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT COUNT(*) as total
+		FROM " . DB_PREFIX . "product p 
+			LEFT JOIN " . DB_PREFIX . "review r1 ON (r1.product_id = p.product_id) 
+			" . $join . " 
+		WHERE 
+			" . $where . " 
+			AND r1.status = 1
+		GROUP BY p.product_id";
+
+		$query = $this->db->query($sql);
+
+		return (int) $query->row['total'];
 	}
 }

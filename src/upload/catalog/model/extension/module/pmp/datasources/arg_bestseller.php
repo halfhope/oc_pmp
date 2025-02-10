@@ -19,7 +19,7 @@ class ModelExtensionModulePMPDataSourcesARGBestseller extends ModelExtensionModu
 			" . $join . " 
 		WHERE 
 			" . $where . " 
-			AND o.order_status_id > '0' 
+			AND o.order_status_id > 0 
 		GROUP BY p.product_id 
 		ORDER BY total DESC, " . $sort_order . $limit;
 
@@ -29,5 +29,23 @@ class ModelExtensionModulePMPDataSourcesARGBestseller extends ModelExtensionModu
 		}
 
 		return $product_data;
+	}
+
+	public function getDataTotal($setting) {
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT COUNT(*) as total
+		FROM " . DB_PREFIX . "product p 
+			LEFT JOIN " . DB_PREFIX . "order_product op ON (p.product_id = op.product_id) 
+			LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id) 
+			" . $join . " 
+		WHERE 
+			" . $where . " 
+			AND o.order_status_id > 0
+		GROUP BY p.product_id ";
+		
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
 	}
 }

@@ -30,4 +30,22 @@ class ModelExtensionModulePMPDataSourcesARGPoints extends ModelExtensionModulePM
 
 		return $product_data;
 	}
+	
+	public function getDataTotal($setting) {
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT COUNT(*) as total
+		FROM " . DB_PREFIX . "product p 
+			LEFT JOIN " . DB_PREFIX . "product_reward pr ON (p.product_id = pr.product_id) 
+			" . $join . " 
+		WHERE  
+			" . $where . " 
+			AND pr.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' 
+			AND pr.points > 0
+		GROUP BY p.product_id";
+
+		$query = $this->db->query($sql);
+
+		return (int) $query->row['total'];
+	}
 }

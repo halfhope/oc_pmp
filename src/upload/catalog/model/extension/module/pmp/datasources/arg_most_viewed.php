@@ -28,4 +28,20 @@ class ModelExtensionModulePMPDataSourcesARGMostViewed extends ModelExtensionModu
 
 		return $product_data;
 	}
+	
+	public function getDataTotal($setting) {
+		list($fields, $join, $where, $sort_order, $limit) = $this->buildProductQuery($setting);
+
+		$sql = "SELECT COUNT(*) as total
+		FROM " . DB_PREFIX . "product p 
+			" . $join . " 
+		WHERE 
+			" . $where . " 
+			AND p.viewed > 0
+		GROUP BY p.product_id";
+
+		$query = $this->db->query($sql);
+
+		return (int) $query->row['total'];
+	}
 }
